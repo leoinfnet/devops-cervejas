@@ -1,5 +1,7 @@
 package br.com.acme.cervejas;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/")
@@ -21,6 +26,8 @@ public class CervejaController {
     private String location;
     @Autowired
     CervejaRepository cervejaRepository;
+
+    Logger logger = LoggerFactory.getLogger(CervejaController.class);
     @GetMapping
     public ResponseEntity<?> getAll(){
         return ResponseEntity.ok(cervejaRepository.findAll());
@@ -36,6 +43,19 @@ public class CervejaController {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok(strings);
+    }
+    @GetMapping("/errors")
+    public ResponseEntity<?> getErrors(){
+        IntStream.range(0,100).forEach(value -> {
+            int valor = new Random().nextInt(5000);
+
+            if(valor >= 4800){
+                logger.error("O valor é invalido: " +  valor);
+            }else {
+                logger.info("O valor é: " +  valor);
+            }
+        });
+        return ResponseEntity.ok("OK");
     }
 
 }
