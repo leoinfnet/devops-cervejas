@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cervejas-app
+  namespace: cervejaria
+  labels:
+    app: cervejas-app
+spec:
+  containers:
+    - name: cervejas-app
+      image: leogloriainfnet/cervejas-app:k8s
+      imagePullPolicy: Always
+  restartPolicy: Always
+  

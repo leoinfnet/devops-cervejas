@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -26,6 +27,8 @@ public class CervejaController {
     private String location;
     @Autowired
     CervejaRepository cervejaRepository;
+    @Value("${application.name}")
+    private String appName;
 
     Logger logger = LoggerFactory.getLogger(CervejaController.class);
     @GetMapping
@@ -44,6 +47,12 @@ public class CervejaController {
         }
         return ResponseEntity.ok(strings);
     }
+
+    @GetMapping("/name")
+    public ResponseEntity hello(){
+        return ResponseEntity.ok(Map.of("name", appName));
+    }
+
     @GetMapping("/errors")
     public ResponseEntity<?> getErrors(){
         IntStream.range(0,100).forEach(value -> {

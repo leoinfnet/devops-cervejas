@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cerveja-pv
+  namespace: cervejaria
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: cervejas
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /Users/leonardogloria/Documents/Projetos/Infnet/graduacao/devops/cervejas/k8s/logs

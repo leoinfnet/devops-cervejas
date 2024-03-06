@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cervejas-deploy
+  namespace: cervejaria
+  labels:
+    app: cervejas-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cervejas-app
+  template:
+    metadata:
+      name: cervejas-app
+      labels:
+        app: cervejas-app
+    spec:
+      volumes:
+        - name: logs-volume
+          persistentVolumeClaim:
+            claimName: cerveja-pvc
+      containers:
+        - name: cervejas-deploy
+          image: leogloriainfnet/cervejas-app:k8s
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/logs/spring/
+              name: logs-volume
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health
+            initialDelaySeconds: 10
+            failureThreshold: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health
+      restartPolicy: Always
+      

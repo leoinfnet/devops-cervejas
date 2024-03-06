@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db-acme
+  namespace: cervejaria
+  labels:
+    app: db-acme
+spec:
+  containers:
+    - name: db-acme
+      image: leogloriainfnet/cervejas-acme:1.0
+      env:
+        - name: POSTGRES_PASSWORD
+          value: "123456"
+      ports:
+        - containerPort: 5432
+      imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+  
