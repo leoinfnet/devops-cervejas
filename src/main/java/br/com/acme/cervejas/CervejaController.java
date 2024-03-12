@@ -1,5 +1,8 @@
 package br.com.acme.cervejas;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,15 @@ public class CervejaController {
     @Value("${application.name}")
     private String appName;
 
+    private final MeterRegistry meterRegistry;
+
+
     Logger logger = LoggerFactory.getLogger(CervejaController.class);
+
+    public CervejaController(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
+
     @GetMapping
     public ResponseEntity<?> getAll(){
         return ResponseEntity.ok(cervejaRepository.findAll());
@@ -57,13 +68,24 @@ public class CervejaController {
     public ResponseEntity<?> getErrors(){
         IntStream.range(0,100).forEach(value -> {
             int valor = new Random().nextInt(5000);
-
+            Counter counter= Counter.builder("quantidade_cervejas_com_erro")
+                    .tag("cervejas_com_erro", "erro")
+                    .description("Quantidade de cervejas que deram errado")
+                    .register(meterRegistry);
             if(valor >= 4800){
                 logger.error("O valor é invalido: " +  valor);
+                counter.increment();
             }else {
                 logger.info("O valor é: " +  valor);
             }
         });
+        return ResponseEntity.ok("OK");
+    }
+    @GetMapping( "/temperatura")
+    public ResponseEntity temperaturaDoFreezer(){
+        Gauge.builder("temepraturaFreezer", () -> new Random().nextFloat(45))
+                .description("A current number of books in the system")
+                .register(meterRegistry);
         return ResponseEntity.ok("OK");
     }
 
